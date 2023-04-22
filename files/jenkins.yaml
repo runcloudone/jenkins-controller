@@ -1,0 +1,101 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)."
+  numExecutors: 0
+  securityRealm:
+    local:
+      users:
+        - id: ${ADMIN_USERNAME}
+          password: ${ADMIN_PASSWORD}
+          description: "Jenkins admin user"
+          properties:
+            - mailer:
+                emailAddress: ${ADMIN_EMAIL}
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  clouds:
+    - ecs:
+        name: "fargate-cloud"
+        allowedOverrides: "inheritFrom,label,memory,cpu,image"
+        credentialsId: ""
+        cluster: ${ECS_AGENT_CLUSTER}
+        regionName: ${AWS_REGION}
+        jenkinsUrl: "http://${JENKINS_CLOUD_MAP_NAME}:${HTTP_PORT}"
+        retainAgents: ${RETAIN_ECS_AGENTS}
+        retentionTimeout: ${ECS_AGENT_RETENTION_TIMEOUT}
+        templates:
+          - templateName: "critical"
+            label: "fargate"
+            image: ${AGENT_IMAGE}
+            cpu: 512
+            memory: 0
+            memoryReservation: 1024
+            launchType: "FARGATE"
+            capacityProviderStrategies:
+              - base: 0
+                weight: 100
+                provider: "FARGATE"
+            networkMode: "awsvpc"
+            assignPublicIp: false
+            subnets: ${SUBNET_IDS}
+            securityGroups: ${SECURITY_GROUP_IDS}
+            executionRole: ${EXECUTION_ROLE_ARN}
+            taskRole: ${TASK_ROLE_ARN}
+            enableExecuteCommand: false
+            privileged: false
+            uniqueRemoteFSRoot: false
+            logDriver: awslogs
+            logDriverOptions:
+              - name: "awslogs-region"
+                value: ${AWS_REGION}
+              - name: "awslogs-group"
+                value: ${ECS_AGENT_LOG_GROUP}
+              - name: "awslogs-stream-prefix"
+                value: "task"
+          - templateName: "common"
+            label: "fargate-spot"
+            image: ${AGENT_IMAGE}
+            cpu: 512
+            memory: 0
+            memoryReservation: 1024
+            launchType: "FARGATE"
+            capacityProviderStrategies:
+              - base: 0
+                weight: 100
+                provider: "FARGATE_SPOT"
+            networkMode: "awsvpc"
+            assignPublicIp: false
+            subnets: ${SUBNET_IDS}
+            securityGroups: ${SECURITY_GROUP_IDS}
+            executionRole: ${EXECUTION_ROLE_ARN}
+            taskRole: ${TASK_ROLE_ARN}
+            enableExecuteCommand: false
+            privileged: false
+            uniqueRemoteFSRoot: false
+            logDriver: awslogs
+            logDriverOptions:
+              - name: "awslogs-region"
+                value: ${AWS_REGION}
+              - name: "awslogs-group"
+                value: ${ECS_AGENT_LOG_GROUP}
+              - name: "awslogs-stream-prefix"
+                value: "task"
+unclassified:
+  location:
+    adminAddress: ${ADMIN_EMAIL}
+    url: "${JENKINS_URL}"
+  defaultFolderConfiguration:
+    healthMetrics:
+      - worstChildHealthMetric:
+          recursive: true
+  globalLibraries:
+    libraries:
+      - defaultVersion: "main"
+        name: "jenkins-pipeline-commons"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: ${PIPELINE_COMMONS_REPO}
+                traits:
+                  - "gitBranchDiscovery"

@@ -1,0 +1,33 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)."
+  securityRealm:
+    local:
+      users:
+        - id: ${ADMIN_USERNAME}
+          password: ${ADMIN_PASSWORD}
+          description: "Jenkins admin user"
+          properties:
+            - mailer:
+                emailAddress: ${ADMIN_EMAIL}
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+unclassified:
+  location:
+    adminAddress: ${ADMIN_EMAIL}
+    url: "${JENKINS_URL}"
+  defaultFolderConfiguration:
+    healthMetrics:
+      - worstChildHealthMetric:
+          recursive: true
+  globalLibraries:
+    libraries:
+      - defaultVersion: "main"
+        name: "jenkins-pipeline-commons"
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: ${PIPELINE_COMMONS_REPO}
+                traits:
+                  - "gitBranchDiscovery"

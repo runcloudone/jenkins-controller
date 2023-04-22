@@ -1,3 +1,4 @@
+ansicolor:1.0.2
 amazon-ecs:1.48
 blueocean:1.27.3
 build-timeout:1.30
@@ -5,4 +6,6 @@ cloudbees-folder:6.815.v0dd5a_cb_40e0e
 configuration-as-code:1625.v27444588cc3d
 email-ext:2.96
 git:5.0.0
+git-parameter:0.9.18
 job-dsl:1.83
+ws-cleanup:0.45

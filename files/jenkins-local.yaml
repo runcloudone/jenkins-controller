@@ -30,7 +30,7 @@ security:
     sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
 unclassified:
   location:
-    adminAddress: ${ADMIN_EMAIL}
+    adminAddress: ${JENKINS_ADMIN_EMAIL}
   defaultFolderConfiguration:
     healthMetrics:
       - worstChildHealthMetric:

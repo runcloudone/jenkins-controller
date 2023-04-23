@@ -1,21 +1,36 @@
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - basicSSHUserPrivateKey:
+              id: "github-ssh-key"
+              privateKeySource:
+                directEntry:
+                  privateKey: ${JENKINS_GITHUB_KEY}
+              scope: GLOBAL
+              username: "github-ssh-key"
 jenkins:
-  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)."
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)"
+  labelString: "fargate"
+  slaveAgentPort: -1
   securityRealm:
     local:
       users:
-        - id: ${ADMIN_USERNAME}
-          password: ${ADMIN_PASSWORD}
+        - id: ${JENKINS_ADMIN_USERNAME}
+          password: ${JENKINS_ADMIN_PASSWORD}
           description: "Jenkins admin user"
           properties:
             - mailer:
-                emailAddress: ${ADMIN_EMAIL}
+                emailAddress: ${JENKINS_ADMIN_EMAIL}
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
+security:
+  gitHostKeyVerificationConfiguration:
+    sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
 unclassified:
   location:
     adminAddress: ${ADMIN_EMAIL}
-    url: "${JENKINS_URL}"
   defaultFolderConfiguration:
     healthMetrics:
       - worstChildHealthMetric:
@@ -28,6 +43,7 @@ unclassified:
           modernSCM:
             scm:
               git:
-                remote: ${PIPELINE_COMMONS_REPO}
+                remote: ${JENKINS_PIPELINE_COMMONS_REPO}
+                credentialsId: "github-ssh-key"
                 traits:
                   - "gitBranchDiscovery"

@@ -1,15 +1,26 @@
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - basicSSHUserPrivateKey:
+              id: "github-ssh-key"
+              privateKeySource:
+                directEntry:
+                  privateKey: ${JENKINS_GITHUB_KEY}
+              scope: GLOBAL
+              username: "github-ssh-key"
 jenkins:
-  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)."
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)"
   numExecutors: 0
   securityRealm:
     local:
       users:
-        - id: ${ADMIN_USERNAME}
-          password: ${ADMIN_PASSWORD}
+        - id: ${JENKINS_ADMIN_USERNAME}
+          password: ${JENKINS_ADMIN_PASSWORD}
           description: "Jenkins admin user"
           properties:
             - mailer:
-                emailAddress: ${ADMIN_EMAIL}
+                emailAddress: ${JENKINS_ADMIN_EMAIL}
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
@@ -26,7 +37,7 @@ jenkins:
         templates:
           - templateName: "critical"
             label: "fargate"
-            image: ${AGENT_IMAGE}
+            image: ${ECS_AGENT_IMAGE}
             cpu: 512
             memory: 0
             memoryReservation: 1024
@@ -37,10 +48,10 @@ jenkins:
                 provider: "FARGATE"
             networkMode: "awsvpc"
             assignPublicIp: false
-            subnets: ${SUBNET_IDS}
-            securityGroups: ${SECURITY_GROUP_IDS}
-            executionRole: ${EXECUTION_ROLE_ARN}
-            taskRole: ${TASK_ROLE_ARN}
+            subnets: ${ECS_AGENT_SUBNET_IDS}
+            securityGroups: ${ECS_AGENT_SECURITY_GROUP_IDS}
+            executionRole: ${ECS_AGENT_EXECUTION_ROLE_ARN}
+            taskRole: ${ECS_AGENT_TASK_ROLE_ARN}
             enableExecuteCommand: false
             privileged: false
             uniqueRemoteFSRoot: false
@@ -54,7 +65,7 @@ jenkins:
                 value: "task"
           - templateName: "common"
             label: "fargate-spot"
-            image: ${AGENT_IMAGE}
+            image: ${ECS_AGENT_IMAGE}
             cpu: 512
             memory: 0
             memoryReservation: 1024
@@ -65,10 +76,10 @@ jenkins:
                 provider: "FARGATE_SPOT"
             networkMode: "awsvpc"
             assignPublicIp: false
-            subnets: ${SUBNET_IDS}
-            securityGroups: ${SECURITY_GROUP_IDS}
-            executionRole: ${EXECUTION_ROLE_ARN}
-            taskRole: ${TASK_ROLE_ARN}
+            subnets: ${ECS_AGENT_SUBNET_IDS}
+            securityGroups: ${ECS_AGENT_SECURITY_GROUP_IDS}
+            executionRole: ${ECS_AGENT_EXECUTION_ROLE_ARN}
+            taskRole: ${ECS_AGENT_TASK_ROLE_ARN}
             enableExecuteCommand: false
             privileged: false
             uniqueRemoteFSRoot: false
@@ -80,9 +91,12 @@ jenkins:
                 value: ${ECS_AGENT_LOG_GROUP}
               - name: "awslogs-stream-prefix"
                 value: "task"
+security:
+  gitHostKeyVerificationConfiguration:
+    sshHostKeyVerificationStrategy: "acceptFirstConnectionStrategy"
 unclassified:
   location:
-    adminAddress: ${ADMIN_EMAIL}
+    adminAddress: ${JENKINS_ADMIN_EMAIL}
     url: "${JENKINS_URL}"
   defaultFolderConfiguration:
     healthMetrics:
@@ -96,6 +110,7 @@ unclassified:
           modernSCM:
             scm:
               git:
-                remote: ${PIPELINE_COMMONS_REPO}
+                remote: ${JENKINS_PIPELINE_COMMONS_REPO}
+                credentialsId: "github-ssh-key"
                 traits:
                   - "gitBranchDiscovery"

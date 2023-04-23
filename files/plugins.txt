@@ -8,4 +8,5 @@ email-ext:2.96
 git:5.0.0
 git-parameter:0.9.18
 job-dsl:1.83
+timestamper:1.24
 ws-cleanup:0.45

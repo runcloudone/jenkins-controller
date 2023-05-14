@@ -114,3 +114,7 @@ unclassified:
                 credentialsId: "github-ssh-key"
                 traits:
                   - "gitBranchDiscovery"
+  scmGit:
+    globalConfigEmail: "runcloudone@gmail.com"
+    globalConfigName: "jenkins"
+    hideCredentials: true

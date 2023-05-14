@@ -1,4 +1,4 @@
-VERSION        ?= 2.401
+VERSION        ?= 2.404
 BASE_IMAGE_TAG ?= jenkins/jenkins:$(VERSION)-jdk11
 BUILD_NUMBER   ?= $(shell git rev-parse --short HEAD)
 

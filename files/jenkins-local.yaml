@@ -11,7 +11,6 @@ credentials:
               username: "github-ssh-key"
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin (JCasC)"
-  labelString: "fargate"
   slaveAgentPort: -1
   securityRealm:
     local:

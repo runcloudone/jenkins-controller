@@ -1,5 +1,4 @@
 ansicolor:1.0.2
-amazon-ecs:1.48
 blueocean:1.27.4
 build-timeout:1.31
 cloudbees-folder:6.815.v0dd5a_cb_40e0e
